@@ -1,79 +1,46 @@
 
-from xml.dom.minidom import Document
+from xml.dom.minidom import Document, Element
 
-class TestCase :
+class TestCase(Element) :
 	def __init__(self) :
-		self.name = ""
-		self.status = ""
-		self.time = ""
-		self.classname = ""
+		Element.__init__(self, "testcase")
+		Element.setAttribute(self, "name", "")
+		Element.setAttribute(self, "status", "")
+		Element.setAttribute(self, "time", "")
+		Element.setAttribute(self, "classname", "")
 
-	def toElement(self) :
-		element = Document().createElement("testcase")
-		element.setAttribute("name", self.name)
-		element.setAttribute("status", self.status)
-		element.setAttribute("time", self.time)
-		element.setAttribute("classname", self.classname)
-		return element
+	def appendChild(self, node) :
+		# TODO: raise exception
+		pass
 
-class TestSuite :
+class TestSuite(Element) :
 	def __init__(self) :
-		self.name = ""
-		self.failures = 0
-		self.disabled = 0
-		self.errors = 0
-		self.time = 0
-		self.tests = 0
-		self._testcases = []
+		Element.__init__(self, "testsuite")
 
-	def appendTestCase(self, testcase) :
+	def appendChild(self, testcase) :
 		if not isinstance(testcase, TestCase) :
-			raise TypeError("Not a TestCase instance")
+			raise TypeError()
+		Element.appendChild(self, testcase)
 
-		self._testcases.append(testcase)
-		self.tests += 1;
-
-	def toElement(self) :
-		element = Document().createElement("testsuite")
-		element.setAttribute("name", self.name)
-		element.setAttribute("tests", str(self.tests))
-		element.setAttribute("failures", str(self.failures))
-		element.setAttribute("disabled", str(self.disabled))
-#		element.setAttribute("errors", self.errors)
-#		element.setAttribute("time", self.time)
-		for testcase in self._testcases :
-			element.appendChild(testcase.toElement())
-		return element;
-
-class JUnitTestXMLOutput :
+class TestSuites(Element) :
 	def __init__(self) :
-		self._testsuites = []
+		Element.__init__(self, "testsuites")
 
-	def appendTestSuite(self, testsuite) :
+	def appendChild(self, testsuite) :
 		if not isinstance(testsuite, TestSuite) :
-			raise TypeError("Not a TestSuite instance")
-		self._testsuites.append(testsuite)
+			raise TypeError()
+		Element.appendChild(self, testsuite)
 
-	def toXML(self) :
-		doc = Document()
-		element = doc.createElement("testsuites")
-		element.setAttribute("tests", str(sum([testsuite.tests for testsuite in self._testsuites])))
+class JUnitDocument(Document) :
+	def __init__(self) :
+		Document.__init__(self)
 
-		for testsuite in self._testsuites :
-			element.appendChild(testsuite.toElement())
-
-		doc.appendChild(element)
-		return doc
 
 if __name__ == "__main__" :
-	xml = JUnitTestXMLOutput()
+	doc = Document()
 
-	testsuite = TestSuite()
-	testsuite.appendTestCase(TestCase())
-	testsuite.appendTestCase(TestCase())
-	testsuite.appendTestCase(TestCase())
-	testsuite.appendTestCase(TestCase())
+	testsuites = TestSuites()
+	testsuites.appendChild(TestSuite())
 
-	xml.appendTestSuite(testsuite)
-	
-	print xml.toXML().toprettyxml()
+	doc.appendChild(testsuites)
+	print doc.toprettyxml()
