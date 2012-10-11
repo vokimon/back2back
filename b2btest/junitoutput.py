@@ -37,7 +37,7 @@ class JUnitDocument(Document) :
 
 
 if __name__ == "__main__" :
-	doc = Document()
+	doc = JUnitDocument()
 
 	testsuites = TestSuites()
 	testsuites.appendChild(TestSuite())
