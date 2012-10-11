@@ -1,46 +1,90 @@
 
 from xml.dom.minidom import Document, Element
 
-class TestCase(Element) :
+class TestCase() :
 	def __init__(self) :
-		Element.__init__(self, "testcase")
-		Element.setAttribute(self, "name", "")
-		Element.setAttribute(self, "status", "")
-		Element.setAttribute(self, "time", "")
-		Element.setAttribute(self, "classname", "")
+		self._element = Element("testcase")
+		self._element.setAttribute("name", "")
+		self._element.setAttribute("status", "")
+		self._element.setAttribute("time", "0")
+		self._element.setAttribute("classname", "")
 
-	def appendChild(self, node) :
-		# TODO: raise exception
-		pass
+	def setAttribute(self, attribute, value) :
+		self._element.setAttribute(attribute, value)
 
-class TestSuite(Element) :
+	def getAttribute(self, attribute) :
+		return self._element.getAttribute(attribute)
+
+class TestSuite() :
 	def __init__(self) :
-		Element.__init__(self, "testsuite")
+		self._element = Element("testsuite")
+		self._element.setAttribute("name", "")
+		self._element.setAttribute("tests", "0")
+		self._element.setAttribute("failures", "0")
+		self._element.setAttribute("disabled", "0")
+		self._element.setAttribute("errors", "0")
+		self._element.setAttribute("time", "0")
+
+
+	def getAttribute(self, attribute) :
+		return self._element.getAttribute(attribute)
 
 	def appendChild(self, testcase) :
 		if not isinstance(testcase, TestCase) :
 			raise TypeError()
-		Element.appendChild(self, testcase)
+		self._element.appendChild(testcase._element)
+		self._element.setAttribute("tests", str(int(self._element.getAttribute("tests")) + 1)) 
+		self._element.setAttribute("time", str(int(self._element.getAttribute("time")) + int(testcase.getAttribute("time"))))
+		status = testcase.getAttribute("status")
+		if status == "notrun" :
+			self._element.setAttribute(self, "disabled",  str(int(self._element.getAttribute(self, "disabled")) + 1))
 
-class TestSuites(Element) :
+class TestSuites() :
 	def __init__(self) :
-		Element.__init__(self, "testsuites")
+		self._element = Element("testsuites")
+		self._element.setAttribute("name", "")
+		self._element.setAttribute("tests", "0")
+		self._element.setAttribute("failures", "0")
+		self._element.setAttribute("disabled", "0")
+		self._element.setAttribute("errors", "0")
+		self._element.setAttribute("time", "0")
 
 	def appendChild(self, testsuite) :
 		if not isinstance(testsuite, TestSuite) :
 			raise TypeError()
-		Element.appendChild(self, testsuite)
+		self._element.appendChild(testsuite._element)
+		self._element.setAttribute("tests", str(int(self._element.getAttribute("tests")) + int(testsuite.getAttribute("tests"))))
+		self._element.setAttribute("failures", str(int(self._element.getAttribute("failures")) + int(testsuite.getAttribute("failures"))))
+		self._element.setAttribute("disabled", str(int(self._element.getAttribute("disabled")) + int(testsuite.getAttribute("disabled"))))
+		self._element.setAttribute("errors", str(int(self._element.getAttribute("errors")) + int(testsuite.getAttribute("errors"))))
+		self._element.setAttribute("time", str(int(self._element.getAttribute("time")) + int(testsuite.getAttribute("time"))))
 
-class JUnitDocument(Document) :
+class JUnitDocument() :
 	def __init__(self) :
-		Document.__init__(self)
+		self._document = Document()
+
+	def appendChild(self, testsuites) :
+		if not isinstance(testsuites, TestSuites) :
+			raise TypeError()
+		self._document.appendChild(testsuites._element)
+
+	def toxml(self) :
+		return self._document.toprettyxml()
+
+
 
 
 if __name__ == "__main__" :
 	doc = JUnitDocument()
 
+	testcase = TestCase()
+	testsuite = TestSuite()
 	testsuites = TestSuites()
-	testsuites.appendChild(TestSuite())
+
+	testsuite.appendChild(testcase)
+	testsuite.appendChild(TestCase())
+
+	testsuites.appendChild(testsuite)
 
 	doc.appendChild(testsuites)
-	print doc.toprettyxml()
+	print doc.toxml()
