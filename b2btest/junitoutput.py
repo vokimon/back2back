@@ -3,8 +3,9 @@ import xml.dom.minidom as MD
 
 class TestCase() :
 	def __init__(self, name, status, time, classname) :
-		if not time.isdigit():
-			raise ValueError()
+		if float(time) < 0.0:
+			raise ValueError
+		
 		self._element = MD.Element("testcase")
 		self._element.setAttribute("name", name)
 		self._element.setAttribute("status", status)
@@ -32,6 +33,7 @@ class TestSuite() :
 	def appendTestCase(self, testcase) :
 		if not isinstance(testcase, TestCase) :
 			raise TypeError()
+
 		self._element.appendChild(testcase._element)
 		self._element.setAttribute("tests", str(float(self.attrib("tests")) + 1)) 
 		self._element.setAttribute("time", str(float(self.attrib("time")) + float(testcase.attrib("time"))))

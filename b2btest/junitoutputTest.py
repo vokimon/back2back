@@ -4,10 +4,13 @@ import junitoutput as JU
 class TestCaseTest(unittest.TestCase):
 
 	def test_creation(self):
-		JU.TestCase("name", "status", "1", "classname")
+		JU.TestCase("name", "status", "1.0", "classname")
 
 	def test_creation_timeIsNotANumber(self):
 		self.assertRaises(ValueError, JU.TestCase, "name", "status", "time", "classname")
+
+	def test_creation_timeIsNegative(self):
+		self.assertRaises(ValueError, JU.TestCase, "name", "status", "-1.0", "classname")
 
 	def test_attributes(self):
 		testcase = JU.TestCase("name", "status", "1", "classname")
