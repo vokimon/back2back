@@ -3,10 +3,13 @@ from xml.dom.minidom import Document, Element
 
 class TestCase() :
 	def __init__(self, name, status, time, classname) :
+		if not time.isdigit():
+			raise ValueError
+
 		self._element = Element("testcase")
 		self._element.setAttribute("name", name)
 		self._element.setAttribute("status", status)
-		self._element.setAttribute("time", time)
+		self._element.setAttribute("time", str(int(time)))
 		self._element.setAttribute("classname", classname)
 
 	def getAttribute(self, attribute) :
