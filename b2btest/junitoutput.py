@@ -1,11 +1,11 @@
 
-from xml.dom.minidom import Document, Element
+import xml.dom.minidom as MD
 
 class TestCase() :
 	def __init__(self, name, status, time, classname) :
 		if not time.isdigit():
 			raise ValueError()
-		self._element = Element("testcase")
+		self._element = MD.Element("testcase")
 		self._element.setAttribute("name", name)
 		self._element.setAttribute("status", status)
 		self._element.setAttribute("time", time)
@@ -16,7 +16,7 @@ class TestCase() :
 
 class TestSuite() :
 	def __init__(self, name) :
-		self._element = Element("testsuite")
+		self._element = MD.Element("testsuite")
 		self._element.setAttribute("name", name)
 		self._element.setAttribute("tests", "0")
 		self._element.setAttribute("failures", "0")
@@ -40,7 +40,7 @@ class TestSuite() :
 
 class JUnitDocument() :
 	def __init__(self, name) :
-		self._element = Element("testsuites")
+		self._element = MD.Element("testsuites")
 		self._element.setAttribute("name", name)
 		self._element.setAttribute("tests", "0")
 		self._element.setAttribute("failures", "0")
@@ -62,7 +62,7 @@ class JUnitDocument() :
 		self._element.setAttribute("time", str(float(self.attrib("time")) + float(testsuite.attrib("time"))))
 
 	def toxml(self) :
-		doc = Document()
+		doc = MD.Document()
 		doc.appendChild(self._element)
 		return doc.toprettyxml()
 
