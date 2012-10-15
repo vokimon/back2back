@@ -3,13 +3,10 @@ from xml.dom.minidom import Document, Element
 
 class TestCase() :
 	def __init__(self, name, status, time, classname) :
-		if not time.isdigit():
-			raise ValueError
-
 		self._element = Element("testcase")
 		self._element.setAttribute("name", name)
 		self._element.setAttribute("status", status)
-		self._element.setAttribute("time", str(time))
+		self._element.setAttribute("time", str(float(time)))
 		self._element.setAttribute("classname", classname)
 
 	def getAttribute(self, attribute) :
@@ -33,11 +30,11 @@ class TestSuite() :
 		if not isinstance(testcase, TestCase) :
 			raise TypeError()
 		self._element.appendChild(testcase._element)
-		self._element.setAttribute("tests", str(int(self._element.getAttribute("tests")) + 1)) 
-		self._element.setAttribute("time", str(int(self._element.getAttribute("time")) + int(testcase.getAttribute("time"))))
+		self._element.setAttribute("tests", str(float(self._element.getAttribute("tests")) + 1)) 
+		self._element.setAttribute("time", str(float(self._element.getAttribute("time")) + float(testcase.getAttribute("time"))))
 		status = testcase.getAttribute("status")
 		if status == "notrun" :
-			self._element.setAttribute(self, "disabled",  str(int(self._element.getAttribute(self, "disabled")) + 1))
+			self._element.setAttribute(self, "disabled",  str(float(self._element.getAttribute(self, "disabled")) + 1))
 
 class JUnitDocument() :
 	def __init__(self, name) :
@@ -56,11 +53,11 @@ class JUnitDocument() :
 		if not isinstance(testsuite, TestSuite) :
 			raise TypeError()
 		self._element.appendChild(testsuite._element)
-		self._element.setAttribute("tests", str(int(self._element.getAttribute("tests")) + int(testsuite.getAttribute("tests"))))
-		self._element.setAttribute("failures", str(int(self._element.getAttribute("failures")) + int(testsuite.getAttribute("failures"))))
-		self._element.setAttribute("disabled", str(int(self._element.getAttribute("disabled")) + int(testsuite.getAttribute("disabled"))))
-		self._element.setAttribute("errors", str(int(self._element.getAttribute("errors")) + int(testsuite.getAttribute("errors"))))
-		self._element.setAttribute("time", str(int(self._element.getAttribute("time")) + int(testsuite.getAttribute("time"))))
+		self._element.setAttribute("tests", str(float(self._element.getAttribute("tests")) + float(testsuite.getAttribute("tests"))))
+		self._element.setAttribute("failures", str(float(self._element.getAttribute("failures")) + float(testsuite.getAttribute("failures"))))
+		self._element.setAttribute("disabled", str(float(self._element.getAttribute("disabled")) + float(testsuite.getAttribute("disabled"))))
+		self._element.setAttribute("errors", str(float(self._element.getAttribute("errors")) + float(testsuite.getAttribute("errors"))))
+		self._element.setAttribute("time", str(float(self._element.getAttribute("time")) + float(testsuite.getAttribute("time"))))
 
 	def toxml(self) :
 		doc = Document()
