@@ -15,6 +15,12 @@ class TestCase() :
 	def attrib(self, attribute) :
 		return self._element.getAttribute(attribute)
 
+	def appendFailure(self, message) :
+		failure = MD.Element("failure")
+		failure.setAttribute("message", message)
+		failure.setAttribute("type", "")
+		self._element.appendChild(failure)
+
 
 class TestSuite() :
 	def __init__(self, name) :
