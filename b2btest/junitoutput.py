@@ -11,6 +11,7 @@ class TestCase() :
 		self._element.setAttribute("status", status)
 		self._element.setAttribute("time", time)
 		self._element.setAttribute("classname", classname)
+		self.failed = False
 
 	def attrib(self, attribute) :
 		return self._element.getAttribute(attribute)
@@ -20,6 +21,7 @@ class TestCase() :
 		failure.setAttribute("message", message)
 		failure.setAttribute("type", "")
 		self._element.appendChild(failure)
+		self.failed = True
 
 
 class TestSuite() :
@@ -41,11 +43,13 @@ class TestSuite() :
 			raise TypeError()
 
 		self._element.appendChild(testcase._element)
-		self._element.setAttribute("tests", str(float(self.attrib("tests")) + 1)) 
+		self._element.setAttribute("tests", str(int(self.attrib("tests")) + 1)) 
 		self._element.setAttribute("time", str(float(self.attrib("time")) + float(testcase.attrib("time"))))
 		status = testcase.attrib("status")
 		if status == "notrun" :
-			self._element.setAttribute(self, "disabled",  str(float(self.attrib(self, "disabled")) + 1))
+			self._element.setAttribute("disabled",  str(int(self.attrib("disabled")) + 1))
+		if testcase.failed == True :
+			self._element.setAttribute("failures", str(int(self.attrib("failures")) + 1))
 
 
 class JUnitDocument() :
@@ -59,16 +63,16 @@ class JUnitDocument() :
 		self._element.setAttribute("time", "0")
 
 	def attrib(self, attribute) :
-		return self._element.getattribute(attribute)
+		return self._element.getAttribute(attribute)
 
 	def appendTestSuite(self, testsuite) :
 		if not isinstance(testsuite, TestSuite) :
 			raise TypeError()
 		self._element.appendChild(testsuite._element)
-		self._element.setAttribute("tests", str(float(self.attrib("tests")) + float(testsuite.attrib("tests"))))
-		self._element.setAttribute("failures", str(float(self.attrib("failures")) + float(testsuite.attrib("failures"))))
-		self._element.setAttribute("disabled", str(float(self.attrib("disabled")) + float(testsuite.attrib("disabled"))))
-		self._element.setAttribute("errors", str(float(self.attrib("errors")) + float(testsuite.attrib("errors"))))
+		self._element.setAttribute("tests", str(int(self.attrib("tests")) + int(testsuite.attrib("tests"))))
+		self._element.setAttribute("failures", str(int(self.attrib("failures")) + int(testsuite.attrib("failures"))))
+		self._element.setAttribute("disabled", str(int(self.attrib("disabled")) + int(testsuite.attrib("disabled"))))
+		self._element.setAttribute("errors", str(int(self.attrib("errors")) + int(testsuite.attrib("errors"))))
 		self._element.setAttribute("time", str(float(self.attrib("time")) + float(testsuite.attrib("time"))))
 
 	def toxml(self) :
@@ -80,9 +84,13 @@ class JUnitDocument() :
 if __name__ == "__main__" :
 	doc = JUnitDocument("First")
 
+	testcase = TestCase("test0", "notrun", "1", "class")
+	testcase.appendFailure("failure message")
+
 	testsuite = TestSuite("suite0")
 	testsuite.appendTestCase(TestCase("test1", "run", "10", "class1"))
-	testsuite.appendTestCase(TestCase("test1", "run", "10", "class1"))
+	testsuite.appendTestCase(TestCase("test2", "run", "10", "class1"))
+	testsuite.appendTestCase(testcase)
 
 	doc.appendTestSuite(TestSuite("suite1"))
 	doc.appendTestSuite(testsuite)
