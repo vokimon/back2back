@@ -14,6 +14,7 @@ class TestCase() :
 	def attrib(self, attribute) :
 		return self._element.getAttribute(attribute)
 
+
 class TestSuite() :
 	def __init__(self, name) :
 		self._element = MD.Element("testsuite")
@@ -37,6 +38,7 @@ class TestSuite() :
 		status = testcase.attrib("status")
 		if status == "notrun" :
 			self._element.setAttribute(self, "disabled",  str(float(self.attrib(self, "disabled")) + 1))
+
 
 class JUnitDocument() :
 	def __init__(self, name) :
