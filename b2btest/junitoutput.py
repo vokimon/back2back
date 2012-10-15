@@ -3,13 +3,15 @@ from xml.dom.minidom import Document, Element
 
 class TestCase() :
 	def __init__(self, name, status, time, classname) :
+		if not time.isdigit():
+			raise ValueError()
 		self._element = Element("testcase")
 		self._element.setAttribute("name", name)
 		self._element.setAttribute("status", status)
-		self._element.setAttribute("time", str(float(time)))
+		self._element.setAttribute("time", time)
 		self._element.setAttribute("classname", classname)
 
-	def getAttribute(self, attribute) :
+	def attrib(self, attribute) :
 		return self._element.getAttribute(attribute)
 
 class TestSuite() :
@@ -23,18 +25,18 @@ class TestSuite() :
 		self._element.setAttribute("time", "0")
 
 
-	def getAttribute(self, attribute) :
+	def attrib(self, attribute) :
 		return self._element.getAttribute(attribute)
 
 	def appendTestCase(self, testcase) :
 		if not isinstance(testcase, TestCase) :
 			raise TypeError()
 		self._element.appendChild(testcase._element)
-		self._element.setAttribute("tests", str(float(self._element.getAttribute("tests")) + 1)) 
-		self._element.setAttribute("time", str(float(self._element.getAttribute("time")) + float(testcase.getAttribute("time"))))
-		status = testcase.getAttribute("status")
+		self._element.setAttribute("tests", str(float(self.attrib("tests")) + 1)) 
+		self._element.setAttribute("time", str(float(self.attrib("time")) + float(testcase.attrib("time"))))
+		status = testcase.attrib("status")
 		if status == "notrun" :
-			self._element.setAttribute(self, "disabled",  str(float(self._element.getAttribute(self, "disabled")) + 1))
+			self._element.setAttribute(self, "disabled",  str(float(self.attrib(self, "disabled")) + 1))
 
 class JUnitDocument() :
 	def __init__(self, name) :
@@ -46,18 +48,18 @@ class JUnitDocument() :
 		self._element.setAttribute("errors", "0")
 		self._element.setAttribute("time", "0")
 
-	def getAttribute(self, attribute) :
-		return self._element.getAttribute(attribute)
+	def attrib(self, attribute) :
+		return self._element.getattribute(attribute)
 
 	def appendTestSuite(self, testsuite) :
 		if not isinstance(testsuite, TestSuite) :
 			raise TypeError()
 		self._element.appendChild(testsuite._element)
-		self._element.setAttribute("tests", str(float(self._element.getAttribute("tests")) + float(testsuite.getAttribute("tests"))))
-		self._element.setAttribute("failures", str(float(self._element.getAttribute("failures")) + float(testsuite.getAttribute("failures"))))
-		self._element.setAttribute("disabled", str(float(self._element.getAttribute("disabled")) + float(testsuite.getAttribute("disabled"))))
-		self._element.setAttribute("errors", str(float(self._element.getAttribute("errors")) + float(testsuite.getAttribute("errors"))))
-		self._element.setAttribute("time", str(float(self._element.getAttribute("time")) + float(testsuite.getAttribute("time"))))
+		self._element.setAttribute("tests", str(float(self.attrib("tests")) + float(testsuite.attrib("tests"))))
+		self._element.setAttribute("failures", str(float(self.attrib("failures")) + float(testsuite.attrib("failures"))))
+		self._element.setAttribute("disabled", str(float(self.attrib("disabled")) + float(testsuite.attrib("disabled"))))
+		self._element.setAttribute("errors", str(float(self.attrib("errors")) + float(testsuite.attrib("errors"))))
+		self._element.setAttribute("time", str(float(self.attrib("time")) + float(testsuite.attrib("time"))))
 
 	def toxml(self) :
 		doc = Document()
