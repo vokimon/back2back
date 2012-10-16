@@ -1,20 +1,27 @@
-
 import xml.dom.minidom as MD
 
-class TestCase() :
-	def __init__(self, name, status, time, classname) :
-		if float(time) < 0.0:
+class TestCase :
+	def __init__(self, name) :
+		if not name :
 			raise ValueError
-		
+
 		self._element = MD.Element("testcase")
 		self._element.setAttribute("name", name)
-		self._element.setAttribute("status", status)
-		self._element.setAttribute("time", time)
-		self._element.setAttribute("classname", classname)
+		self._element.setAttribute("status", "run")
+		self._element.setAttribute("time", "0")
+		self._element.setAttribute("classname", "")
 		self.failed = False
 
-	def attrib(self, attribute) :
+	def _attrib(self, attribute) :
 		return self._element.getAttribute(attribute)
+
+	def setTime(self, time) :
+		if float(time) < 0.0 :
+			raise ValueError
+		self._element.setAttribute("time", str(time))
+
+	def setClassname(self, classname) :
+		self._element.setAttribute("classname", classname)	
 
 	def appendFailure(self, message) :
 		failure = MD.Element("failure")
@@ -35,7 +42,7 @@ class TestSuite() :
 		self._element.setAttribute("time", "0")
 
 
-	def attrib(self, attribute) :
+	def _attrib(self, attribute) :
 		return self._element.getAttribute(attribute)
 
 	def appendTestCase(self, testcase) :
@@ -43,13 +50,13 @@ class TestSuite() :
 			raise TypeError()
 
 		self._element.appendChild(testcase._element)
-		self._element.setAttribute("tests", str(int(self.attrib("tests")) + 1)) 
-		self._element.setAttribute("time", str(float(self.attrib("time")) + float(testcase.attrib("time"))))
-		status = testcase.attrib("status")
+		self._element.setAttribute("tests", str(int(self._attrib("tests")) + 1)) 
+		self._element.setAttribute("time", str(float(self._attrib("time")) + float(testcase._attrib("time"))))
+		status = testcase._attrib("status")
 		if status == "notrun" :
-			self._element.setAttribute("disabled",  str(int(self.attrib("disabled")) + 1))
+			self._element.setAttribute("disabled",  str(int(self._attrib("disabled")) + 1))
 		if testcase.failed == True :
-			self._element.setAttribute("failures", str(int(self.attrib("failures")) + 1))
+			self._element.setAttribute("failures", str(int(self._attrib("failures")) + 1))
 
 
 class JUnitDocument() :
@@ -62,18 +69,18 @@ class JUnitDocument() :
 		self._element.setAttribute("errors", "0")
 		self._element.setAttribute("time", "0")
 
-	def attrib(self, attribute) :
+	def _attrib(self, attribute) :
 		return self._element.getAttribute(attribute)
 
 	def appendTestSuite(self, testsuite) :
 		if not isinstance(testsuite, TestSuite) :
 			raise TypeError()
 		self._element.appendChild(testsuite._element)
-		self._element.setAttribute("tests", str(int(self.attrib("tests")) + int(testsuite.attrib("tests"))))
-		self._element.setAttribute("failures", str(int(self.attrib("failures")) + int(testsuite.attrib("failures"))))
-		self._element.setAttribute("disabled", str(int(self.attrib("disabled")) + int(testsuite.attrib("disabled"))))
-		self._element.setAttribute("errors", str(int(self.attrib("errors")) + int(testsuite.attrib("errors"))))
-		self._element.setAttribute("time", str(float(self.attrib("time")) + float(testsuite.attrib("time"))))
+		self._element.setAttribute("tests", str(int(self._attrib("tests")) + int(testsuite._attrib("tests"))))
+		self._element.setAttribute("failures", str(int(self._attrib("failures")) + int(testsuite._attrib("failures"))))
+		self._element.setAttribute("disabled", str(int(self._attrib("disabled")) + int(testsuite._attrib("disabled"))))
+		self._element.setAttribute("errors", str(int(self._attrib("errors")) + int(testsuite._attrib("errors"))))
+		self._element.setAttribute("time", str(float(self._attrib("time")) + float(testsuite._attrib("time"))))
 
 	def toxml(self) :
 		doc = MD.Document()
@@ -82,17 +89,21 @@ class JUnitDocument() :
 
 
 if __name__ == "__main__" :
-	doc = JUnitDocument("First")
+	doc = JUnitDocument("MyTests")
 
-	testcase = TestCase("test0", "notrun", "1", "class")
+	testsuite = TestSuite("testsuite_name")
+
+	testcase = TestCase("testcase_name")
+	testcase.setTime(1.3)
+	testcase.setClassname("testcase_classname")
 	testcase.appendFailure("failure message")
 
-	testsuite = TestSuite("suite0")
-	testsuite.appendTestCase(TestCase("test1", "run", "10", "class1"))
-	testsuite.appendTestCase(TestCase("test2", "run", "10", "class1"))
-	testsuite.appendTestCase(testcase)
+	testcase1 = TestCase("testcase1_name")
+	testcase1.setTime(0.3)
 
-	doc.appendTestSuite(TestSuite("suite1"))
+	testsuite.appendTestCase(testcase)
+	testsuite.appendTestCase(testcase1)
+
 	doc.appendTestSuite(testsuite)
 
 	print doc.toxml()
