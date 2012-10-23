@@ -1,6 +1,7 @@
 import unittest
 import junitoutput as JU
 
+
 class TestCaseTest(unittest.TestCase):
 
 	def test_creation(self):
@@ -13,6 +14,7 @@ class TestCaseTest(unittest.TestCase):
 	def test_creation_timeIsNegative(self):
 		testcase = JU.TestCase("name")
 		self.assertRaises(ValueError, testcase.setTime, "-1.0")
+
 
 class TestSuiteTest(unittest.TestCase):	
 	
@@ -38,6 +40,13 @@ class TestSuiteTest(unittest.TestCase):
 		testcase.setTime(1.1)
 		testsuite.appendTestCase(testcase)
 		self.assertEqual(float(testsuite._attrib("time")), 3.7)
+
+
+class TestJUnitDocument(unittest.TestCase):
+	
+	def test_creation(self):
+		JU.JUnitDocument("name")
+		self.assertRaises(TypeError, JU.JUnitDocument)
 
 
 if __name__ == '__main__':
