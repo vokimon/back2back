@@ -10,7 +10,7 @@ setup(
     url = "https://github.com/vokimon/back2back",
 	packages=[
 		'b2btest',
-		'wavefile',
+		'wavefile_audiolab',
 		],
     )
 

@@ -28,12 +28,12 @@ extensions = [
 ]
 
 def differences(expected, result, diffBase=None) :
-	import wavefile
+	import wavefile_audiolab
 	import numpy as np
 
 	errors = []
-	with wavefile.WaveReader(expected) as expectedReader :
-		with wavefile.WaveReader(result) as resultReader :
+	with wavefile_audiolab.WaveReader(expected) as expectedReader :
+		with wavefile_audiolab.WaveReader(result) as resultReader :
 			for attribute in [
 				'samplerate',
 				'channels',
@@ -71,7 +71,7 @@ def differences(expected, result, diffBase=None) :
 				import os.path
 				extension = os.path.splitext(result)[-1]
 				diffwav = diffBase+extension
-				diffWriter = wavefile.WaveWriter(diffwav, 
+				diffWriter = wavefile_audiolab.WaveWriter(diffwav, 
 						channels = channels,
 						samplerate = expectedReader.samplerate,
 						)
