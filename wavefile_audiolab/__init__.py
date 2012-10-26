@@ -92,6 +92,7 @@ class WaveReader(object) :
 				'format' : sndfile_handler.format,
 				'frames' : sndfile_handler.nframes,
 				} # TODO: metadata not implemented
+		self._readed_frames = 0
 	def __enter__(self) :
 		return self
 	def __exit__(self,type,value,traceback) :
@@ -107,8 +108,12 @@ class WaveReader(object) :
 	def frames(self) : return self._info['frames']
 
 	def read(self, data) :
-		assert data.shape[1] == self.channels()
-		return self._sndfile.read_frames (data.shape[0], dtype=data.dtype)
+		assert data.shape[1] == self.channels
+		desired_read_length = data.shape[0] 
+		to_read_length = desired_read_length if self._readed_frames + desired_read_length <= self._info['frames'] else self._info['frames'] - self._readed_frames
+		data = self._sndfile.read_frames(to_read_length, dtype=data.dtype)
+		self._readed_frames += to_read_length
+		return to_read_length
 
 if __name__ == '__main__' :
 
