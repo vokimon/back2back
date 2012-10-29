@@ -111,8 +111,11 @@ class WaveReader(object) :
 		assert data.shape[1] == self.channels
 		desired_read_length = data.shape[0] 
 		to_read_length = desired_read_length if self._readed_frames + desired_read_length <= self._info['frames'] else self._info['frames'] - self._readed_frames
-		data = self._sndfile.read_frames(to_read_length, dtype=data.dtype)
+		tmp_data = self._sndfile.read_frames(to_read_length, dtype=data.dtype)
+		for i in range(len(tmp_data)):
+			data[i] = tmp_data[i]
 		self._readed_frames += to_read_length
+#		print data
 		return to_read_length
 
 if __name__ == '__main__' :
