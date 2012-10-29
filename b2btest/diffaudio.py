@@ -77,8 +77,8 @@ def differences(expected, result, diffBase=None) :
 						)
 
 			with diffWriter :
-				resultData = np.empty((hopsize, channels), np.float64)
-				expectedData = np.empty((hopsize, channels), np.float64)
+				resultData = np.zeros((hopsize, channels), np.float64)
+				expectedData = np.zeros((hopsize, channels), np.float64)
 
 				maxdiff      = np.zeros((channels))
 				maxdiffpos   = np.array([None]*channels)
