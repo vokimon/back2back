@@ -27,18 +27,22 @@ extensions = [
 	'au',
 ]
 
-def differences(expected, result, diffBase=None) :
+def differences(expected, result, diffBase=None, threshold_dBs=-80 , allow_different_duration=False) :
 	import wavefile_audiolab
 	import numpy as np
+
+	mandatory_attributes = [ 
+				'samplerate', 
+				'channels',
+				'frames',
+				] 
+	if allow_different_duration : 
+		mandatory_attributes.remove('frames')
 
 	errors = []
 	with wavefile_audiolab.WaveReader(expected) as expectedReader :
 		with wavefile_audiolab.WaveReader(result) as resultReader :
-			for attribute in [
-				'samplerate',
-				'channels',
-				'frames',
-				] :
+			for attribute in mandatory_attributes :
 				expectedAttribute = getattr(expectedReader, attribute)
 				resultAttribute = getattr(resultReader, attribute)
 				if expectedAttribute != resultAttribute :
@@ -118,7 +122,6 @@ def differences(expected, result, diffBase=None) :
 
 					period += 1
 
-			threshold_dBs = -80.0 # dB
 			threshold_amplitude = 10**(threshold_dBs/20)
 
 			errors += [
@@ -188,6 +191,7 @@ def cummulativeCompare(values, pos, diff, offset) :
 
 if __name__ == '__main__' :
 
+	import sys
 	diffs = differences(*sys.argv[1:])
 	if not diffs : print "Ok"; sys.exit(0)
 	for d in diffs :
