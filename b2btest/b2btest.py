@@ -170,7 +170,7 @@ due to floating point missmatches, use:
 def _caseList(cases) :
 	return "".join(["\t"+case+"\n" for case in cases])
 
-def runBack2BackProgram(datapath, argv, back2BackCases, help=help) :
+def runBack2BackProgram_returnSuccess(datapath, argv, back2BackCases, help=help) :
 
 	"--help" not in sys.argv or die(help, 0)
 
@@ -203,7 +203,10 @@ def runBack2BackProgram(datapath, argv, back2BackCases, help=help) :
 		accept(datapath, back2BackCases, architectureSpecific)
 		sys.exit()
 
-	passB2BTests(datapath, back2BackCases) or die("Tests not passed")
+	return passB2BTests(datapath, back2BackCases)
 
+
+def runBack2BackProgram(datapath, argv, back2BackCases, help=help) :
+	runBack2BackProgram_returnSuccess(datapath, argv, back2BackCases, help) or die("Tests not passed") 
 
 ### End of generic stuff
