@@ -231,9 +231,6 @@ def runBack2BackProgram_returnSuccess(datapath, argv, back2BackCases, help=help)
 		accept(datapath, back2BackCases, architectureSpecific)
 		sys.exit()
 
-	if "--xml" in argv :
-		print "XML output required"
-
 	return passB2BTests(datapath, back2BackCases)
 
 def runBack2BackProgram(datapath, argv, back2BackCases, help=help) :
