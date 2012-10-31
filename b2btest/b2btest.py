@@ -1,5 +1,8 @@
-import os, sys, string
+import os, sys, string, time
 import subprocess
+
+from junitoutput import *
+
 
 def run(command) :
 	print '\033[32m:: ', command, '\033[0m'
@@ -95,9 +98,20 @@ def removeIfExists(filename) :
 
 
 def passB2BTests(datapath, back2BackCases) :
-	failedCases = []
+	failedCases = []	
+	
+	testsuite = TestSuite("testsuite_name")
+
 	for case, command, outputs in back2BackCases :
-		passB2BTest(datapath, case, command, outputs)
+		testsuite.appendTestCase(passB2BTest(datapath, failedCases, case, command, outputs))
+
+	
+	junitDoc = JUnitDocument("MyTest")
+	junitDoc.appendTestSuite(testsuite)
+
+	junitFile = open("result.xml", "w")
+	junitFile.write(junitDoc.toxml())
+	junitFile.close()
 
 	print "Summary:"
 	print '\033[32m%i passed cases\033[0m'%(len(back2BackCases)-len(failedCases))
@@ -112,18 +126,24 @@ def passB2BTests(datapath, back2BackCases) :
 	return False
 
 
-def passB2BTest(datapath, case, command, outputs):
+def passB2BTest(datapath, failedCases, case, command, outputs):
+	testcase = TestCase(case)
 	phase("Test: %s Command: '%s'"%(case,command))
 	for output in outputs :
 		removeIfExists(output)
 	try :
+		startTime = int(round(time.time() * 1000))
 		commandError = subprocess.call(command, shell=True)
+		endTime = int(round(time.time() * 1000))
+		testcase.setTime(endTime-startTime)
 		if commandError :
 			failedCases.append((case, ["Command failed with return code %i:\n'%s'"%(commandError,command)]))
-			return
+			testcase.appendFailure("Command failed with return code %i:\n'%s'"%(commandError,command))
+			return testcase
 	except OSError, e :
 		failedCases.append((case, ["Unable to run command: '%s'"%(command)]))
-		return
+		testcase.appendFailure("Unable to run command: '%s'"%(command))
+		return testcase
 	failures = []
 	for output in outputs :
 
@@ -144,9 +164,12 @@ def passB2BTest(datapath, case, command, outputs):
 			print "\033[31m Failed\033[0m"
 			os.system('cp %s %s' % (output, badResultName(base,extension)) )
 			failures.append("Output '%s':\n%s"%(base, '\n'.join(['\t- %s'%item for item in difference])))
+			testcase.appendFailure("Output '%s':\n%s"%(base, '\n'.join(['\t- %s'%item for item in difference])))
 		removeIfExists(output)
 	if failures :
 		failedCases.append((case, failures))
+
+	return testcase
 
 help ="""
 To run the tests call this script without parameters.
