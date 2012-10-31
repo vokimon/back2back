@@ -93,43 +93,11 @@ def removeIfExists(filename) :
 	try: os.remove(filename)
 	except: pass
 
+
 def passB2BTests(datapath, back2BackCases) :
 	failedCases = []
 	for case, command, outputs in back2BackCases :
-		phase("Test: %s Command: '%s'"%(case,command))
-		for output in outputs :
-			removeIfExists(output)
-		try :
-			commandError = subprocess.call(command, shell=True)
-			if commandError :
-				failedCases.append((case, ["Command failed with return code %i:\n'%s'"%(commandError,command)]))
-				continue
-		except OSError, e :
-			failedCases.append((case, ["Unable to run command: '%s'"%(command)]))
-			continue
-		failures = []
-		for output in outputs :
-
-			extension = os.path.splitext(output)[-1]
-			base = prefix(datapath, case, output)
-			expected = expectedName(base, extension)
-			diffbase = diffBaseName(base)
-			difference = diff_files(expected, output, diffbase)
-			#diffbase = diffbase+'.wav'
-			diffbase = diffbase + extension
-
-			if not difference:
-				print "\033[32m Passed\033[0m"
-				removeIfExists(diffbase)
-				removeIfExists(diffbase+'.png')
-				removeIfExists(badResultName(base,extension))
-			else:
-				print "\033[31m Failed\033[0m"
-				os.system('cp %s %s' % (output, badResultName(base,extension)) )
-				failures.append("Output '%s':\n%s"%(base, '\n'.join(['\t- %s'%item for item in difference])))
-			removeIfExists(output)
-		if failures :
-			failedCases.append((case, failures))
+		passB2BTest(datapath, case, command, outputs)
 
 	print "Summary:"
 	print '\033[32m%i passed cases\033[0m'%(len(back2BackCases)-len(failedCases))
@@ -142,6 +110,43 @@ def passB2BTests(datapath, back2BackCases) :
 		for msg in msgs :
 			print "\t%s"%msg
 	return False
+
+
+def passB2BTest(datapath, case, command, outputs):
+	phase("Test: %s Command: '%s'"%(case,command))
+	for output in outputs :
+		removeIfExists(output)
+	try :
+		commandError = subprocess.call(command, shell=True)
+		if commandError :
+			failedCases.append((case, ["Command failed with return code %i:\n'%s'"%(commandError,command)]))
+			return
+	except OSError, e :
+		failedCases.append((case, ["Unable to run command: '%s'"%(command)]))
+		return
+	failures = []
+	for output in outputs :
+
+		extension = os.path.splitext(output)[-1]
+		base = prefix(datapath, case, output)
+		expected = expectedName(base, extension)
+		diffbase = diffBaseName(base)
+		difference = diff_files(expected, output, diffbase)
+		#diffbase = diffbase+'.wav'
+		diffbase = diffbase + extension
+
+		if not difference:
+			print "\033[32m Passed\033[0m"
+			removeIfExists(diffbase)
+			removeIfExists(diffbase+'.png')
+			removeIfExists(badResultName(base,extension))
+		else:
+			print "\033[31m Failed\033[0m"
+			os.system('cp %s %s' % (output, badResultName(base,extension)) )
+			failures.append("Output '%s':\n%s"%(base, '\n'.join(['\t- %s'%item for item in difference])))
+		removeIfExists(output)
+	if failures :
+		failedCases.append((case, failures))
 
 help ="""
 To run the tests call this script without parameters.
