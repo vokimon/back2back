@@ -9,7 +9,7 @@ class TestCase :
 		self._element.setAttribute("name", name)
 		self._element.setAttribute("status", "run")
 		self._element.setAttribute("time", "0")
-		self._element.setAttribute("classname", "")
+		#self._element.setAttribute("classname", "")
 		self.failed = False
 
 	def _attrib(self, attribute) :
@@ -20,7 +20,7 @@ class TestCase :
 			raise ValueError
 		self._element.setAttribute("time", str(time))
 
-	def setClassname(self, classname) :
+	def _setClassname(self, classname) :
 		self._element.setAttribute("classname", classname)	
 
 	def appendFailure(self, message) :
@@ -52,6 +52,7 @@ class TestSuite() :
 		self._element.appendChild(testcase._element)
 		self._element.setAttribute("tests", str(int(self._attrib("tests")) + 1)) 
 		self._element.setAttribute("time", str(float(self._attrib("time")) + float(testcase._attrib("time"))))
+		testcase._setClassname(self._attrib("name"))
 		status = testcase._attrib("status")
 		if status == "notrun" :
 			self._element.setAttribute("disabled",  str(int(self._attrib("disabled")) + 1))
