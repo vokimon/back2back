@@ -6,7 +6,7 @@ readme = open('README.md', encoding='utf8').read()
 
 setup(
 	name = "b2btest",
-	version = "2.0.0",
+	version = "1.4.0",
 	install_requires=[
 		'consolemsg',
 		'yamlns',
