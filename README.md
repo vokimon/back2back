@@ -86,20 +86,14 @@ Just use:
 $ pip install b2btest
 ```
 
-In order to get the by extension diffs:
+In order to properly diff audio files you should consider installing the audio extension
 
 ```bash
-$ pip install b2btest[audio,xml]
+$ pip install b2btest_audio
 ```
 
 Dependencies
 ------------
-
-B2b for audio files requires the [wavefile] module:
-Which in turn requires having [libsndfile] library installed.
-
-[wavefile]: https://github.com/vokimon/python-wavefile
-[libsndfile]: http://www.mega-nerd.com/libsndfile/
 
 For xml files, it requires [lxml] module and both
 [libxml2] and [libxslt] libraries installed
@@ -157,7 +151,7 @@ testcases:
     outputs:
     - output.txt
 
-  Generate1KHzSine:
+  Generate1KHzSine: # Requires the b2btest_audio package
     command: sox -n /tmp/sine.wav synth 1.0 sine  1000.0
     outputs:
     - /tmp/sine.wav
@@ -265,6 +259,10 @@ until you fix it. But don't forget.
 
 Change log
 ----------
+
+### 1.4.0
+
+- Audio plugin separated from this code base as `b2btest_audio`
 
 ### 1.3.3
 
