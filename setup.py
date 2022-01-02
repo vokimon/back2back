@@ -12,12 +12,8 @@ setup(
 		'yamlns',
 		'pathlib2;python_version<"3.5"',
 		'setuptools>40.5',
-		],
-	extras_require= dict(
-		xml=[
-			'lxml',
-		],
-	),
+		'lxml',
+	],
 	description = "Light framework to setup back-to-back test",
 	author = "David Garcia Garzon",
 	author_email = "voki@canvoki.net",
@@ -42,11 +38,11 @@ setup(
 		],
 	entry_points={
 		'console_scripts': [
-			'diffxml=b2btest.diffxml:main [xml]',
+			'diffxml=b2btest.diffxml:main',
 		],
 		'back2back.diff': [
 			'text=b2btest.difftext:differences',
-			'xml=b2btest.diffxml:differences [xml]',
+			'xml=b2btest.diffxml:differences',
 			]
 		},
 	)
