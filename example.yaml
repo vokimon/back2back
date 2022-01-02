@@ -30,8 +30,3 @@ testcases:
     outputs:
     - output.weird
 
-  Generate1KHzSine:
-    command: sox -n /tmp/sine.wav synth 1.0 sine  1000.0
-    outputs:
-    - /tmp/sine.wav
-

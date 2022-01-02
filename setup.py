@@ -13,9 +13,6 @@ setup(
 		'setuptools>40.5',
 		],
 	extras_require= dict(
-		audio=[
-			'wavefile',
-		],
 		xml=[
 			'lxml',
 		],
@@ -44,12 +41,10 @@ setup(
 		],
 	entry_points={
 		'console_scripts': [
-			'diffaudio=b2btest.diffaudio:main [audio]',
 			'diffxml=b2btest.diffxml:main [xml]',
 		],
 		'back2back.diff': [
 			'text=b2btest.difftext:differences',
-			'audio=b2btest.diffaudio:differences [audio]',
 			'xml=b2btest.diffxml:differences [xml]',
 			]
 		},

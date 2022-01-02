@@ -12,11 +12,6 @@ runBack2BackProgram(datapath, sys.argv, [
 		'date > output.txt', [
 			'output.txt',
 		]),
-	('Generate1KHzSine',
-		'sox -n sine.wav synth 1.0 sine  1000.0', [
-			'sine.wav',
-		]),
-
 ])
 
 
