@@ -9,6 +9,7 @@ setup(
 	version = "2.0.0",
 	install_requires=[
 		'consolemsg',
+		'yamlns',
 		'pathlib2;python_version<"3.5"',
 		'setuptools>40.5',
 		],
