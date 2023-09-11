@@ -30,8 +30,8 @@ are extendable with plugins to get informative diff for several
 file formats: audio, xml, text, pdf...
 
 
-Why back-to-back testing
-------------------------
+Why back-to-back testing?
+-------------------------
 
 A Back-to-back tests is a black box tests that just compares
 that, given an input, you have the same output all the time.
@@ -51,16 +51,19 @@ You may be changing a behaviour which is not exercised
 by the b2b test, and not noticing.
 
 
-Easing the workflow with b2btest
---------------------------------
+Why b2btest?
+------------
 
+This software eases the workflow for back-to-back test.
 When b2b tests are hard to run and maintain,
 they use to get old and useless.
 This script automates most tedious back2back
 related task such as setting up, verifying results,
 accepting changes, clearing data...
 
-Features:
+Features
+--------
+
 * You can put under back2back testing either
   - the outcomes (files) of any shell command line (with pipes and so on), or
   - any serializable data in a `unittest.TestCase` method
@@ -91,6 +94,12 @@ In order to properly diff audio files you should consider installing the audio e
 ```bash
 $ pip install b2btest_audio
 ```
+
+In order to properly diff pdf files:
+```bash
+$ pip install visualpdfdiff
+```
+
 
 Dependencies
 ------------
@@ -230,6 +239,18 @@ Save this file as `back2back.py`, for example, and make it executable.
 Use the python script directly with the same command line
 but without the yaml file.
 
+
+File type support
+-----------------
+
+While text output is relatively easy to diff,
+other type of outputs are harder.
+
+To get better diffs for those file types with plugins, for instance:
+
+- XML files (included)
+- PDF files with [visualpdfdiff](https://github.com/vokimon/visualpdfdiff)
+- Audio files with [b2btest-audio](https://github.com/vokimon/back2back_audio)
 
 
 Extra advices
