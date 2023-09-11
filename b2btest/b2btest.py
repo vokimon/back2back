@@ -198,9 +198,14 @@ help ="""
 To run the tests call this script without parameters.
 	./back2back
 
-Failed cases will generate *_result.wav and *_diff.wav
+Failed cases will generate *_result.ext and *_diff.ext
 files for each missmatching output, containing the
 obtained output and the difference with the expected one.
+
+You can run specific test cases indicating additional
+parameter.
+
+	./back2back case1 case2
 
 If some test fail but you want to accept the new results
 just call:
@@ -223,7 +228,7 @@ def _caseList(cases) :
 
 
 
-def runBack2BackProgram(datapath, argv, back2BackCases, help=help, extensions={}) :
+def runBack2BackProgram(datapath, argv, back2BackCases, chosenCases=[], help=help, extensions={}) :
 
 	"--help" not in argv or fail(help, 0)
 
@@ -235,8 +240,13 @@ def runBack2BackProgram(datapath, argv, back2BackCases, help=help, extensions={}
 		"Check the back 2 back script on information on how to obtain it.")
 
 	availableCases = [case for case, command, outputs in back2BackCases]
+	chosenNotAvailable = set(chosenCases) - set(availableCases)
+	if chosenNotAvailable:
+		sys.stderr.write("Indicated cases are not availabe:\n")
+		for case in chosenNotAvailable:
+			sys.stderr.write("- {}\n".format(case))
 
-	if "--list" in argv :
+	if "--list" in argv or chosenNotAvailable:
 		sys.stdout.write("Available cases:\n")
 		sys.stdout.write(_caseList(availableCases))
 		sys.exit()
@@ -263,6 +273,14 @@ def runBack2BackProgram(datapath, argv, back2BackCases, help=help, extensions={}
 		accept(datapath, back2BackCases, architectureSpecific)
 		sys.exit()
 
+	print("chosenCases", chosenCases)
+	if chosenCases:
+		back2BackCases = [
+			(case, command, outputs)
+			for case, command, outputs
+			in back2BackCases
+			if case in chosenCases
+		]
 	passB2BTests(datapath, back2BackCases, extensions=extensions) or fail("Tests not passed")
 
 
