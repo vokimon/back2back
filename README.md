@@ -260,6 +260,10 @@ until you fix it. But don't forget.
 Change log
 ----------
 
+### 1.4.1
+
+- Fix: specify testcases to run was not working (has ever? it should!)
+
 ### 1.4.0
 
 - Audio plugin separated from this code base as `b2btest_audio`
