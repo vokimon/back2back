@@ -178,6 +178,12 @@ To run them:
 back2back b2bcases.yaml
 ```
 
+Or to run a specific one by its id:
+
+```bash
+back2back b2bcases.yaml HelloWorld
+```
+
 The first time you run a test case, it will fail as there is no
 expectation, you must to check it is valid and accept it.
 Successive failures means that the behaviour has change.
@@ -195,43 +201,39 @@ To accept all failing tests:
 back2back b2bcases.yaml --acceptall
 ```
 
-If some output depends on the computer architecture or in the platform (windows, mac...)
-use the `--arch` and `--platform` options when accepting.
-It will generate an independent expectation file for such architecture or platform.
+Often some outputs depend on the computer architecture or the platform (windows, mac...).
+You can generate an independent expectation file for such architecture or platform
+by using `--arch` and `--platform` options when accepting it.
 
 ```bash
 back2back b2bcases.yaml --accept HelloWorld --arch
 ```
 
-Old inteface
-------------
+Programmatic interface
+----------------------
 
 If you want to generate the test cases progamaticaly,
 you still are able to use the old python interface.
 Instead of a yaml file, write python script like this:
 
-Just like in this b2b script does:
-
 ```python
-	#!/usr/bin/python
-	import sys
-	from b2btest import runBack2BackProgram
+#!/usr/bin/python
+import sys
+from b2btest import runBack2BackProgram
 
-	data_path="path/to/b2bdata"
-	back2BackTests = [
-		("myprogram_with_option",
-				"./myprogram --option input1.wav input2.wav output.wav otheroutput.wav ",
-				[
-					"output.wav",
-					"otheroutput.wav",
-		]),
-		("myprogram_with_other_option",
-				"./myprogram --other-option input1.wav input2.wav output.wav ignoredoutput.wav ",
-				[
-					"output.wav",
-				]),
-		]
-	runBack2BackProgram(data_path, sys.argv, back2BackTests)
+data_path="path/to/b2bdata"
+back2BackTests = [
+	("myprogram_with_option",
+	"./myprogram --option input1.wav input2.wav output.wav otheroutput.wav ", [
+		"output.wav",
+		"otheroutput.wav",
+	]),
+	("myprogram_with_other_option",
+	"./myprogram --other-option input1.wav input2.wav output.wav ignoredoutput.wav ", [
+		"output.wav",
+	]),
+]
+runBack2BackProgram(data_path, sys.argv, back2BackTests)
 ```
 
 Save this file as `back2back.py`, for example, and make it executable.
