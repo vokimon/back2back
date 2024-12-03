@@ -3,15 +3,19 @@ import subprocess
 from consolemsg import step, fail, success, error, warn, printStdError, color, u
 try: from pathlib2 import Path
 except ImportError: from pathlib import Path
+try:
+	from importlib.metadata.entry_points import entry_points
+except ImportError:
+	from pkg_resources import iter_entry_points as entry_points
 
 def printcolor(colorcode, message):
 	printStdError(color(colorcode, message))
 
 class Differ(object):
-	from pkg_resources import iter_entry_points
+
 	methods = dict((
 		(entryPoint.name, entryPoint.load())
-		for entryPoint in iter_entry_points(
+		for entryPoint in entry_points(
 			group='back2back.diff',
 			name=None,
 			)
@@ -50,10 +54,9 @@ def diffbyextension(expected, result, diffbase):
 	return Differ.diff(expected, result, diffbase)
 	self = diffbyextension
 	if not hasattr(self, 'methods'):
-		from pkg_resources import iter_entry_points
 		self.methods = dict((
 			(entryPoint.name, entryPoint.load())
-			for entryPoint in iter_entry_points(
+			for entryPoint in entry_points(
 				group='back2back.diff',
 				name=None,
 				)

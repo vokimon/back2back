@@ -11,6 +11,7 @@ setup(
 		'consolemsg',
 		'yamlns',
 		'pathlib2;python_version<"3.5"',
+		'importlib-metadata;python_version<"3.10"',
 		'setuptools>40.5',
 		'lxml',
 	],
