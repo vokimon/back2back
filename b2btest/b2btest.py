@@ -3,6 +3,7 @@ import subprocess
 from consolemsg import step, fail, success, error, warn, printStdError, color, u
 try: from pathlib2 import Path
 except ImportError: from pathlib import Path
+from .entrypoints import load_entry_points_group
 try:
 	from importlib.metadata import entry_points
 except ImportError:
@@ -13,13 +14,10 @@ def printcolor(colorcode, message):
 
 class Differ(object):
 
-	methods = dict((
+	methods = dict(
 		(entryPoint.name, entryPoint.load())
-		for entryPoint in entry_points(
-			group='back2back.diff',
-			name=None,
-			)
-		))
+		for entryPoint in load_entry_points_group('back2back.diff')
+		)
 	extensions=None
 
 	@classmethod
@@ -54,13 +52,10 @@ def diffbyextension(expected, result, diffbase):
 	return Differ.diff(expected, result, diffbase)
 	self = diffbyextension
 	if not hasattr(self, 'methods'):
-		self.methods = dict((
+		self.methods = dict(
 			(entryPoint.name, entryPoint.load())
-			for entryPoint in entry_points(
-				group='back2back.diff',
-				name=None,
-				)
-			))
+			for entryPoint in load_entry_points_group('back2back.diff')
+			)
 	extensionMap = {
 		".wav" : self.methods['audio'],
 		".txt" : self.methods['text'],
