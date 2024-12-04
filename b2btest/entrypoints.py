@@ -19,7 +19,7 @@ def _iter_entry_points_group__importlib_dict(group):
 	where the key was the group."""
 
 	from importlib.metadata import entry_points
-	for entry in entry_points()[group]:
+	for entry in entry_points().get(group, []):
 		yield entry
 
 def _iter_entry_points_group__importlib_selectable(group):
