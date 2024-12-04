@@ -9,8 +9,8 @@ def _iter_entry_points_group__pkg_resources(group):
 	in Py2.7 and older Py3
 	"""
 
-	from pkg_resources import entry_points
-	for entry in entry_points(group=group):
+	from pkg_resources import iter_entry_points
+	for entry in iter_entry_points(group=group):
 		yield entry
 
 def _iter_entry_points_group__importlib_dict(group):
