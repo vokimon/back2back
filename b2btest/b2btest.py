@@ -4,7 +4,7 @@ from consolemsg import step, fail, success, error, warn, printStdError, color, u
 try: from pathlib2 import Path
 except ImportError: from pathlib import Path
 try:
-	from importlib.metadata.entry_points import entry_points
+	from importlib.metadata import entry_points
 except ImportError:
 	from pkg_resources import iter_entry_points as entry_points
 
